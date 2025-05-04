@@ -21,29 +21,11 @@
             config.allowUnfree = true;
           };
         in
-        (pkgs.buildFHSUserEnv {
-          name = "platformio-fhs";
-          targetPkgs =
-            pkgs: with pkgs; [
-              python312
-              (vscode-with-extensions.override {
-                vscode = vscodium;
-                vscodeExtensions =
-                  with vscode-extensions;
-                  [
-                    ms-python.python
-                    ms-vscode.cpptools
-                  ]
-                  ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-                    {
-                      name = "platformio-ide";
-                      publisher = "platformio";
-                      version = "3.3.3";
-                      sha256 = "sha256-cVYnFhdeClHhuVaTWRU2IDIA1mFq1iLveZUIhEhMSck=";
-                    }
-                  ];
-              })
-            ];
-        }).env;
+        pkgs.mkShell {
+          buildInputs = [ pkgs.platformio ];
+          shellHook = ''
+            export PLATFORMIO_CORE_DIR=$PWD/.platformio
+          '';
+        };
     };
 }
